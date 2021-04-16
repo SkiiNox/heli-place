@@ -6,10 +6,11 @@ import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
 import { AngularOpenlayersModule } from 'ngx-openlayers';
 import { OsmViewComponent } from './osm-view/osm-view.component';
-import {HttpClientModule} from '@angular/common/http'
+import {HttpClientModule} from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, AngularOpenlayersModule, HttpClientModule ],
+  imports:      [ BrowserModule, FormsModule, AngularOpenlayersModule, HttpClientModule, NgbModule ],
   declarations: [ AppComponent, HelloComponent, OsmViewComponent ],
   bootstrap:    [ AppComponent ]
 })
