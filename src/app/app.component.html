@@ -1,0 +1,10 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <a class="navbar-brand" [routerLink]="'.'">Heli Place</a>
+</nav>
+<vo-ui-osm-view 
+[showDebugInfo]="false"
+[showControlsZoom]="true"
+[showControlsCurrentLocation]="true"
+(addressChanged)="onAddressChange($event)"
+>
+</vo-ui-osm-view>
