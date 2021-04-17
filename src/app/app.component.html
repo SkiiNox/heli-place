@@ -1,10 +1,83 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
-    <a class="navbar-brand" [routerLink]="'.'">Heli Place</a>
-</nav>
-<vo-ui-osm-view 
-[showDebugInfo]="false"
-[showControlsZoom]="true"
-[showControlsCurrentLocation]="true"
-(addressChanged)="onAddressChange($event)"
+<mat-toolbar color="primary">
+  <span>Trouve un hotspot chaud de ta région</span>
+<form class="example-form" [formGroup]="searchAdresseForm" style="margin: auto;">
+    <mat-form-field style="width: 600px;">
+        <mat-label>Rechercher une addresse</mat-label>
+        <input type="text"
+                placeholder="221B Baker Street"
+                matInput
+                formControlName="searchString"
+                (keyup)="searchInterest()"
+                [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of foundAdresses" [value]="option">
+            {{option.display_name}}
+        </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+    </form>
+</mat-toolbar>
+
+<mat-drawer-container
+  class="example-container"
+  [hasBackdrop]="false"
 >
-</vo-ui-osm-view>
+  <mat-drawer #drawer [mode]="over">
+  <form (ngSubmit)="saveNewHotspot()" [formGroup]="hotspotForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Hauteur de l'antenne</mat-label>
+      <input
+        matInput
+        type="number"
+        placeholder="En mètre"
+        formControlName="antennaHeight"
+      />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Puissance de l'antenne</mat-label>
+      <input
+        matInput
+        type="number"
+        placeholder="En dBi"
+        formControlName="antennaPower"
+      />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Hotspot</mat-label>
+      <mat-select formControlName="hotspot">
+        <mat-option value="1">HNT Outdoor Hotspot Miner</mat-option>
+        <mat-option value="2">HNT Indoor Hotspot Miner</mat-option>
+        <mat-option value="3">Rak Hotspot Miner</mat-option>
+        <mat-option value="4">SyncroB.it HNT Gateway</mat-option>
+        <mat-option value="5">Bobcat Miner</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>date d'installation prévue</mat-label>
+      <input matInput type="date" formControlName="antennaPower" />
+    </mat-form-field>
+    <button mat-button (click)="drawer.toggle()" color="primary">Annuler</button>
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      [disabled]="hotspotForm.invalid"
+    >
+      Enregistrer
+    </button>
+  </form>
+</mat-drawer>
+  <mat-drawer-content>
+    <vo-ui-osm-view
+    [showDebugInfo]="false"
+    [showControlsZoom]="false"
+    [showControlsCurrentLocation]="true"
+    [longitudePointer]="longitudePointer"
+    [latitudePointer]="latitudePointer"
+    [futurHotspots]="futurHotspots"
+    (addressChanged)="onAddressChange($event);drawer.toggle()"
+    style="max-width: 18rem; z-index: 1000"
+  >
+  </vo-ui-osm-view>
+  </mat-drawer-content>
+</mat-drawer-container>

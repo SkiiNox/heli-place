@@ -14,7 +14,7 @@ import { GeoLocationService } from './geo-location.service'
 
 export class OsmViewComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input()
-  geoReverseService = 'https://nominatim.openstreetmap.org/reverse?key=iTzWSiYpGxDvhATNtSrqx5gDcnMOkntL&format=json&addressdetails=1&lat={lat}&lon={lon}'
+  geoReverseService = 'https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&lat={lat}&lon={lon}'
 
   @Input()
   width: string
@@ -48,6 +48,8 @@ export class OsmViewComponent implements OnInit, OnDestroy, AfterViewInit {
   opacity = 1
   @Input()
   zoom = 14
+  @Input()
+  futurHotspots: any;
 
   markerImage = marker
 
@@ -56,11 +58,10 @@ export class OsmViewComponent implements OnInit, OnDestroy, AfterViewInit {
   pointedAddressOrg: string
   position: any
   installedHotspots: Promise<any>
-  futurHotspots: Promise<any>
   dirtyPosition
 
   @Output()
-  addressChanged = new EventEmitter<String>()
+  addressChanged = new EventEmitter<any>()
 
   constructor(private httpClient: HttpClient, private geoLocationService: GeoLocationService) {
   }
@@ -80,7 +81,6 @@ export class OsmViewComponent implements OnInit, OnDestroy, AfterViewInit {
       })
     }
     this.getAllInstalledHotspots();
-    this.getAllFuturHotspots();
   }
 
   private getAllInstalledHotspots(){
@@ -90,16 +90,6 @@ export class OsmViewComponent implements OnInit, OnDestroy, AfterViewInit {
     })
     .then((myJson) => {
       this.installedHotspots = myJson.data.map(({lng, lat}) => ({lng, lat}));
-    });
-  }
-
-  private getAllFuturHotspots(){
-    fetch('http://localhost:8080/hotspots')
-    .then(function(response) {
-      return response.json();
-    })
-    .then((myJson) => {
-      this.futurHotspots = myJson.map(({lng, lat}) => ({lng, lat}));
     });
   }
 
@@ -145,6 +135,59 @@ export class OsmViewComponent implements OnInit, OnDestroy, AfterViewInit {
       .replace(new RegExp('{lon}', 'ig'), `${this.longitudePointer}`)
       .replace(new RegExp('{lat}', 'ig'), `${this.latitudePointer}`)
     this.reverseGeoSub = this.httpClient.get(service).subscribe(data => {
+      const val = (data || {})
+
+      this.pointedAddressOrg = val['display_name']
+      const address = []
+
+      const building = []
+      if (val['address']['building']) {
+        building.push(val['address']['building'])
+      }
+      if (val['address']['mall']) {
+        building.push(val['address']['mall'])
+      }
+      if (val['address']['theatre']) {
+        building.push(val['address']['theatre'])
+      }
+
+      const zip_city = []
+      if (val['address']['postcode']) {
+        zip_city.push(val['address']['postcode'])
+      }
+      if (val['address']['city']) {
+        zip_city.push(val['address']['city'])
+      }
+      const street_number = []
+      if (val['address']['street']) {
+        street_number.push(val['address']['street'])
+      }
+      if (val['address']['road']) {
+        street_number.push(val['address']['road'])
+      }
+      if (val['address']['footway']) {
+        street_number.push(val['address']['footway'])
+      }
+      if (val['address']['pedestrian']) {
+        street_number.push(val['address']['pedestrian'])
+      }
+      if (val['address']['house_number']) {
+        street_number.push(val['address']['house_number'])
+      }
+
+      if (building.length) {
+        address.push(building.join(' '))
+      }
+      if (zip_city.length) {
+        address.push(zip_city.join(' '))
+      }
+      if (street_number.length) {
+        address.push(street_number.join(' '))
+      }
+
+      this.pointedAddress = address.join(', ')
+
+      this.addressChanged.emit({lat: val['lat'], lng: val['lon']})
     })
   }
 }

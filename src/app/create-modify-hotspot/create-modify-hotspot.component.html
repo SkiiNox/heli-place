@@ -1,0 +1,31 @@
+<mat-card class="card">
+    <form (ngSubmit)="saveNewHotspot()" [formGroup]="hotspotForm">
+  <mat-card-header>
+    <mat-card-title>Ajout d'un hotspot</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field appearance="fill">
+      <mat-label>Hauteur de l'antenne</mat-label>
+      <input matInput type="number" placeholder="En mètre" formControlName="antennaHeight"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Puissance de l'antenne</mat-label>
+        <input matInput type="number" placeholder="En dBi" formControlName="antennaPower"/>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Hotspot</mat-label>
+      <mat-select formControlName="hotspot">
+        <mat-option value="1">HNT Outdoor Hotspot Miner</mat-option>
+        <mat-option value="2">HNT Indoor Hotspot Miner</mat-option>
+        <mat-option value="3">Rak Hotspot Miner</mat-option>
+        <mat-option value="4">SyncroB.it HNT Gateway</mat-option>
+        <mat-option value="5">Bobcat Miner</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-button color="primary">Annuler</button>
+    <button mat-button color="primary" type="submit" [disabled]="hotspotForm.invalid">Enregistrer</button>
+  </mat-card-actions>
+</form>
+</mat-card>

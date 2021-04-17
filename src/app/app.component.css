@@ -1,3 +1,4 @@
-p {
-  font-family: Lato;
+mat-drawer {
+  padding: 12px;
+  width: 250px;
 }
